@@ -1,0 +1,26 @@
+#FROM openjdk:11
+FROM openjdk:11-jre-slim-buster
+
+ENV APP_HOME=/home/app
+
+# create the app user
+RUN adduser --home $APP_HOME app
+WORKDIR $APP_HOME
+
+
+# copy project
+COPY helloworld.jar $APP_HOME/
+
+RUN chmod -R 755 $APP_HOME
+
+# chown all files to the app user
+RUN chown -R app:app $APP_HOME
+
+# change to the app user
+USER app
+
+# run entrypoint.prod.sh
+# ENTRYPOINT ["/home/app/entrypoint.prod.sh"]
+
+# Start app
+CMD ["java", "-jar", "helloworld.jar"]
