@@ -31,6 +31,6 @@ spec:
             command:
             - sh
             - -c
-            - curl -s http://localhost:8080/actuator/health | grep -i '"status":"UP"'
+            - curl -s http://localhost:8080/actuator/health | grep --quiet -e '^{\"status\"\:\"UP\".*}$'
           initialDelaySeconds: 5
           periodSeconds: 5
