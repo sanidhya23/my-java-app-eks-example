@@ -1,6 +1,9 @@
 #FROM openjdk:11
 FROM openjdk:11-jre-slim-buster
 
+#Install curl
+RUN apk update && apk add curl
+
 ENV APP_HOME=/home/app
 
 # create the app user
