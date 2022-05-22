@@ -2,7 +2,7 @@
 FROM openjdk:11-jre-slim-buster
 
 #Install curl
-RUN apk update && apk add curl
+RUN apk --no-cache add curl
 
 ENV APP_HOME=/home/app
 
