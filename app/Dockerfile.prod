@@ -1,5 +1,6 @@
 #FROM openjdk:11
-FROM openjdk:11-jre-slim-buster
+#FROM openjdk:11-jre-slim-buster
+FROM adoptopenjdk/openjdk11:alpine-jre
 
 #Install curl
 RUN apk --no-cache add curl
