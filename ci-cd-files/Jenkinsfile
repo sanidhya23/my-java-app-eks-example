@@ -1,0 +1,85 @@
+pipeline {
+    agent any
+    environment {
+        AWS_DEFAULT_REGION = 'ap-south-1'
+        EKS_CLUSTER = 'cluster1'
+        DEPLOYMENT_FILES = 'app-deployment-files'
+        ARTIFACT_URL = 'https://upday-interview-test.s3-eu-west-1.amazonaws.com/helloworld.jar'
+        ECR_REPO = '221867667342.dkr.ecr.ap-south-1.amazonaws.com/ecr-test-repo1'
+        GIT_REPO = 'https://github.com/sanidhya23/my-java-app-eks-example.git'
+        GIT_BRANCH = 'dev'
+    }
+
+    stages {
+        stage('Clone') {
+           steps {
+                // Clones the repository from the current branch name
+                echo 'Make the output directory'
+                sh 'mkdir -p build'
+            
+                dir('build') {
+                      git branch: "${GIT_BRANCH}", credentialsId: 'jenkins-git-creds', url: "${GIT_REPO}"
+                }               
+           }
+        }
+
+        stage('Download-Artifact') {
+            steps {
+                echo 'Downloading Artifact'
+                dir('build') {
+                   sh 'wget ${ARTIFACT_URL}'                    
+                }
+            }
+        }
+        stage('Build-Docker-Image') {
+            steps {
+                echo 'Build Docker Image'
+                dir('build') {
+                    sh 'docker build -t ${ECR_REPO}:my-java-app-${BUILD_NUMBER} -f ./${DEPLOYMENT_FILES}/Dockerfile.prod .'
+                }
+            }
+        }
+        stage('Push-Docker-Image') {
+            steps {
+                echo 'Push Docker Image to ECR'
+                sh 'docker push ${ECR_REPO}:my-java-app-${BUILD_NUMBER}'
+            }
+        }
+        stage('Initialize Kube Config') {
+            steps {
+                echo 'Get the kubeconfig'
+                sh 'aws eks update-kubeconfig --name ${EKS_CLUSTER} --region ${AWS_DEFAULT_REGION}'
+            }
+        }    
+        stage('Deploy-To-EKS') {
+            steps {
+                echo 'Apply the Deployment and LB service Manifest'
+                dir('build') {
+                    sh 'kubectl apply -f ./${DEPLOYMENT_FILES}/my-java-app-deployment.yaml'
+                    sh 'kubectl set image deployments/my-java-app-deployment app=${ECR_REPO}:my-java-app-${BUILD_NUMBER}'
+                    sh 'kubectl apply -f ./${DEPLOYMENT_FILES}/my-java-app-lb-service.yaml'
+                    sh 'kubectl apply -f ./${DEPLOYMENT_FILES}/my-java-app-hpa.yaml'
+                    sh 'kubectl apply -f ./${DEPLOYMENT_FILES}/my-java-app-pdb.yaml'  
+                }
+            }
+        }
+        stage("Wait for Pods to Start")
+        {
+            steps {
+              sh 'sleep 60'                
+            }
+
+        }
+        stage("Check the health status")
+        {
+            environment {
+              LB = sh(script: 'kubectl get svc my-java-app-lb-service -o jsonpath={.status.loadBalancer.ingress[*].hostname}', returnStdout: true)
+            }
+            steps {
+              sh '''
+                curl -vvi http://${LB}:8080/actuator/health
+               '''
+            }
+        }
+    }
+}
