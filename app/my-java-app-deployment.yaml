@@ -20,9 +20,10 @@ spec:
         ports:
         - containerPort: 8080
         readinessProbe:
-          command:
-            - sh
-            - -c
-            - curl --silent http://localhost:8080/actuator/health | grep -q -e '^{\"status\"\:\"UP\".*}$'
+          exec:
+            command:
+              - sh
+              - -c
+              - curl --silent http://localhost:8080/actuator/health | grep -q -e '^{\"status\"\:\"UP\".*}$'
           initialDelaySeconds: 10
           periodSeconds: 10
