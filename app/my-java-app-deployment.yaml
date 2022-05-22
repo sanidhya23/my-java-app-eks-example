@@ -5,7 +5,7 @@ metadata:
   labels:
     app: my-java-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: my-java-app
@@ -27,6 +27,11 @@ spec:
               - curl --silent http://localhost:8080/actuator/health | grep -q -e '^{\"status\"\:\"UP\".*}$'
           initialDelaySeconds: 10
           periodSeconds: 10
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 200m
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
