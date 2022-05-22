@@ -6,23 +6,11 @@ pipeline {
         DEPLOYMENT_FILES = 'app-deployment-files'
         ARTIFACT_URL = 'https://upday-interview-test.s3-eu-west-1.amazonaws.com/helloworld.jar'
         ECR_REPO = '221867667342.dkr.ecr.ap-south-1.amazonaws.com/ecr-test-repo1'
-        GIT_REPO = 'https://github.com/sanidhya23/my-java-app-eks-example.git'
-        GIT_BRANCH = 'dev'
+        // GIT_REPO = 'https://github.com/sanidhya23/my-java-app-eks-example.git'
+        // GIT_BRANCH = 'dev'
     }
 
     stages {
-        stage('Clone') {
-           steps {
-                // Clones the repository from the current branch name
-                echo 'Make the output directory'
-                sh 'mkdir -p build'
-            
-                dir('build') {
-                      git branch: "${GIT_BRANCH}", credentialsId: 'jenkins-git-creds', url: "${GIT_REPO}"
-                }               
-           }
-        }
-
         stage('Download-Artifact') {
             steps {
                 echo 'Downloading Artifact'
