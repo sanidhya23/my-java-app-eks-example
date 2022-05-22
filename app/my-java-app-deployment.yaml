@@ -5,7 +5,7 @@ metadata:
   labels:
     app: my-java-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: my-java-app
