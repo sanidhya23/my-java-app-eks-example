@@ -25,8 +25,8 @@ spec:
               - sh
               - -c
               - curl --silent http://localhost:8080/actuator/health | grep -q -e '^{\"status\"\:\"UP\".*}$'
-      initialDelaySeconds: 10
-      periodSeconds: 10
+          initialDelaySeconds: 10
+          periodSeconds: 10
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
