@@ -24,4 +24,4 @@ Run the Pipeline job to deploy the Application
 
 
 Application Architecture:
-![app-architecture](https://user-images.githubusercontent.com/26666587/169717065-ad5160b2-e947-4f75-a0da-6a2b9220d997.jpg)
+- ![app-architecture](https://user-images.githubusercontent.com/26666587/169717065-ad5160b2-e947-4f75-a0da-6a2b9220d997.jpg)
