@@ -19,3 +19,18 @@ spec:
         image: 221867667342.dkr.ecr.ap-south-1.amazonaws.com/ecr-test-repo1:my-java-app
         ports:
         - containerPort: 8080
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - curl -s http://localhost:8080/actuator/health | grep -i '"status":"UP"'
+          initialDelaySeconds: 5
+          periodSeconds: 5
