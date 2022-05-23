@@ -1,17 +1,13 @@
-#FROM openjdk:11
-#FROM openjdk:11-jre-slim-buster
 FROM adoptopenjdk/openjdk11:alpine-jre
 
 #Install curl
 RUN apk --no-cache add curl
 
-ENV APP_HOME=/home/app
-
 # create the app user
-#RUN adduser --home $APP_HOME app
 RUN addgroup -S app && adduser -S app -G app
-WORKDIR $APP_HOME
 
+ENV APP_HOME=/home/app
+WORKDIR $APP_HOME
 
 # copy project
 COPY helloworld.jar $APP_HOME/
